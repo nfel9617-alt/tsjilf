@@ -2,13 +2,15 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#130080">
 <title>تسجيل الحضور | ورشات طموح</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#130080;--ink:#130080;--mut:#5a5a8a;--or:#f26a00;--line:#dcdcf0;--field:#f4f4fc}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);font-family:'Cairo',Tahoma,Arial,sans-serif;color:var(--ink);display:flex;justify-content:center;padding:24px 14px;min-height:100vh}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);font-family:'Cairo',Tahoma,Arial,sans-serif;color:var(--ink);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;min-height:100dvh;padding:max(20px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
 .wrap{width:100%;max-width:520px}
 .brand{text-align:center;color:#fff;margin-bottom:14px}
 .brand b{color:var(--or);font-size:36px;font-weight:900}
@@ -18,13 +20,14 @@ h1{font-size:22px;margin:0 0 6px;font-weight:900}
 .meta{color:var(--mut);font-size:14px;margin:0 0 16px}
 .meta span{color:var(--or);font-weight:700}
 label{display:block;font-weight:700;margin:12px 0 6px;font-size:14px}
-select,input{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:var(--field);color:var(--ink);font:inherit}
+select,input{width:100%;min-height:52px;font-size:16px;padding:12px 14px;-webkit-appearance:none;appearance:none;border:2px solid var(--line);border-radius:12px;background:var(--field);color:var(--ink);font:inherit}
 select:focus,input:focus{outline:none;border-color:var(--or)}
 input[type=email]{direction:ltr;text-align:left}
 .hp{position:absolute;left:-9999px;opacity:0}
-button{width:100%;margin-top:18px;border:0;border-radius:12px;padding:13px;background:var(--or);color:#fff;font:inherit;font-weight:700;font-size:17px;cursor:pointer}
+button{width:100%;min-height:54px;margin-top:18px;border:0;border-radius:12px;padding:13px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;background:var(--or);color:#fff;font:inherit;font-weight:700;font-size:17px;cursor:pointer}
 button:disabled{opacity:.6;cursor:wait}
-.msg{margin-top:14px;padding:12px;border-radius:12px;font-size:14px;display:none}
+.msg{margin-top:14px;padding:14px;border-radius:12px;font-size:15px;line-height:1.6;display:none}
+@media (max-width:380px){.card{padding:16px}h1{font-size:19px}.brand b{font-size:30px}}
 .ok{display:block;background:#e6f7ea;color:#14632b}
 .err{display:block;background:#fde8e8;color:#9b1c1c}
 </style>
@@ -37,9 +40,9 @@ button:disabled{opacity:.6;cursor:wait}
     <p class="meta" id="meta"></p>
     <form id="f" novalidate>
       <label for="name">الاسم الكامل</label>
-      <input id="name" type="text" autocomplete="name" maxlength="100" placeholder="مثال: محمد بن علي">
+      <input id="name" type="text" autocomplete="name" enterkeyhint="next" maxlength="100" placeholder="مثال: محمد بن علي">
       <label for="email">البريد الإلكتروني (لإرسال الشهادة)</label>
-      <input id="email" type="email" autocomplete="email" maxlength="120" placeholder="name@example.com">
+      <input id="email" type="email" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="send" autocomplete="email" maxlength="120" placeholder="name@example.com">
       <input class="hp" id="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button id="send" type="submit">سجّل حضوري</button>
     </form>
@@ -49,7 +52,7 @@ button:disabled{opacity:.6;cursor:wait}
 
 <script>
 // ===== الإعدادات: بدّل هذا الرابط برابط Apps Script بعد النشر =====
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz2PTUuTcyVnm3p8SrYKWQrakUD0LysBKGFmYVL8PV3o5FxgerFWLVfm_N5T9Bgu9J84g/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbPaEGKkmkmS5aSwZdzFXk5pIzu2yYtUvV0x57IkqeNzrNeB13CoqiUImJKoKZNGbEUw/exec';
 // اسم الورشة الحالية (يتسجّل في الـ Sheet). بدّله لكل ورشة.
 var WORKSHOP = 'Podcasting & Content Creation - 06/10';
 var WORKSHOP_AR = 'ورشة البودكاست وصناعة المحتوى';
