@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تسجيل الحضور | ورشات طموح</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#130080;--ink:#130080;--mut:#5a5a8a;--or:#f26a00;--line:#dcdcf0;--field:#f4f4fc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:'Cairo',Tahoma,Arial,sans-serif;color:var(--ink);display:flex;justify-content:center;padding:24px 14px;min-height:100vh}
+.wrap{width:100%;max-width:520px}
+.brand{text-align:center;color:#fff;margin-bottom:14px}
+.brand b{color:var(--or);font-size:36px;font-weight:900}
+.brand small{display:block;opacity:.85;letter-spacing:1px}
+.card{background:#fff;border-radius:20px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+h1{font-size:22px;margin:0 0 6px;font-weight:900}
+.meta{color:var(--mut);font-size:14px;margin:0 0 16px}
+.meta span{color:var(--or);font-weight:700}
+label{display:block;font-weight:700;margin:12px 0 6px;font-size:14px}
+select,input{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:var(--field);color:var(--ink);font:inherit}
+select:focus,input:focus{outline:none;border-color:var(--or)}
+input[type=email]{direction:ltr;text-align:left}
+.hp{position:absolute;left:-9999px;opacity:0}
+button{width:100%;margin-top:18px;border:0;border-radius:12px;padding:13px;background:var(--or);color:#fff;font:inherit;font-weight:700;font-size:17px;cursor:pointer}
+button:disabled{opacity:.6;cursor:wait}
+.msg{margin-top:14px;padding:12px;border-radius:12px;font-size:14px;display:none}
+.ok{display:block;background:#e6f7ea;color:#14632b}
+.err{display:block;background:#fde8e8;color:#9b1c1c}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><b>طموح</b><small>Tomouh</small></div>
+  <div class="card">
+    <h1>تسجيل الحضور</h1>
+    <p class="meta" id="meta"></p>
+    <form id="f" novalidate>
+      <label for="name">الاسم الكامل</label>
+      <input id="name" type="text" autocomplete="name" maxlength="100" placeholder="مثال: محمد بن علي">
+      <label for="email">البريد الإلكتروني (لإرسال الشهادة)</label>
+      <input id="email" type="email" autocomplete="email" maxlength="120" placeholder="name@example.com">
+      <input class="hp" id="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button id="send" type="submit">سجّل حضوري</button>
+    </form>
+    <div class="msg" id="msg"></div>
+  </div>
+</div>
+
+<script>
+// ===== الإعدادات: بدّل هذا الرابط برابط Apps Script بعد النشر =====
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbPaEGKkmkmS5aSwZdzFXk5pIzu2yYtUvV0x57IkqeNzrNeB13CoqiUImJKoKZNGbEUw/exec';
+// اسم الورشة الحالية (يتسجّل في الـ Sheet). بدّله لكل ورشة.
+var WORKSHOP = 'Podcasting & Content Creation - 06/10';
+var WORKSHOP_AR = 'ورشة البودكاست وصناعة المحتوى';
+var WORKSHOP_WHEN = 'الثلاثاء 06/10 · 6:30 مساءً';
+// ================================================================
+
+document.getElementById('meta').innerHTML = WORKSHOP_AR + ' · <span>' + WORKSHOP_WHEN + '</span>';
+var f = document.getElementById('f'), msg = document.getElementById('msg'), btn = document.getElementById('send');
+function show(t, c){ msg.className = 'msg ' + c; msg.textContent = t; }
+
+f.addEventListener('submit', async function(e){
+  e.preventDefault();
+  var name = document.getElementById('name').value.trim();
+  var email = document.getElementById('email').value.trim();
+  if (name.length < 3) return show('اكتب اسمك الكامل.', 'err');
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return show('البريد الإلكتروني غير صحيح.', 'err');
+  if (SCRIPT_URL.indexOf('PUT_YOUR') === 0) return show('لم يتم ربط الصفحة بالـ Google Sheet بعد.', 'err');
+
+  btn.disabled = true;
+  try {
+    var r = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // يتفادى preflight
+      body: JSON.stringify({ name: name, email: email, workshop: WORKSHOP, website: document.getElementById('website').value })
+    });
+    var j = await r.json();
+    if (!j.ok) throw new Error(j.error || 'fail');
+    f.style.display = 'none';
+    show(j.duplicate ? 'أنت مسجّل من قبل ✅ الشهادة تجيك على الإيميل.' : 'تم تسجيلك ✅ شكراً ' + name + '، الشهادة تجيك على الإيميل بعد نهاية الورشة.', 'ok');
+  } catch (err) {
+    show('ما قدرناش نسجّلوك، حاول مرة أخرى.', 'err');
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
