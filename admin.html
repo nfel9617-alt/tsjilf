@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#130080">
+<meta name="color-scheme" content="light only">
+<meta name="robots" content="noindex">
+<title>إدارة | ورشات طموح</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+html{background:#130080;color-scheme:light only;-webkit-text-size-adjust:100%}
+*{box-sizing:border-box}
+body{margin:0;background:#130080;font-family:'Cairo',Tahoma,Arial,sans-serif;color:#130080;padding:20px 14px 40px}
+.wrap{max-width:760px;margin:0 auto}
+.brand{text-align:center;color:#fff;margin-bottom:14px}.brand b{color:#f26a00;font-size:32px;font-weight:900}.brand small{display:block;opacity:.85}
+.card{background:#fff;border-radius:18px;padding:18px;margin-bottom:14px}
+h2{margin:0 0 10px;font-size:18px;font-weight:900}
+label{display:block;font-weight:700;font-size:14px;margin:10px 0 5px}
+input,select,textarea{width:100%;min-height:48px;font:inherit;font-size:16px;padding:10px 12px;border:2px solid #dcdcf0;border-radius:12px;background:#f4f4fc;color:#130080}
+textarea{min-height:100px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#f26a00}
+.ltr{direction:ltr;text-align:left}
+button{font:inherit;font-weight:700;border:0;border-radius:12px;padding:12px 16px;min-height:48px;background:#f26a00;color:#fff;cursor:pointer;touch-action:manipulation}
+button.alt{background:#130080}button.ghost{background:#eceaff;color:#130080}
+button:disabled{opacity:.55;cursor:wait}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.row>*{flex:1 1 150px}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;font-size:14px}
+.stats span{background:#eceaff;border-radius:99px;padding:4px 12px}
+.tw{overflow-x:auto;max-height:420px;border:1px solid #dcdcf0;border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:8px;border-bottom:1px solid #eee;text-align:right;white-space:nowrap}
+th{position:sticky;top:0;background:#eceaff}
+td.e{direction:ltr;text-align:left}
+.msg{margin-top:10px;padding:10px 12px;border-radius:10px;font-size:14px;line-height:1.7;display:none;white-space:pre-line}
+.ok{display:block;background:#e6f7ea;color:#14632b}.err{display:block;background:#fde8e8;color:#9b1c1c}.info{display:block;background:#eceaff}
+#dash{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><b>طموح</b><small>لوحة الإدارة</small></div>
+
+  <div class="card" id="login">
+    <h2>دخول المنظّمين</h2>
+    <label for="pw">كلمة السر</label>
+    <input id="pw" type="password" autocomplete="current-password">
+    <div class="row"><button id="go">دخول</button></div>
+    <div class="msg" id="lmsg"></div>
+  </div>
+
+  <div id="dash">
+    <div class="card">
+      <h2>الحاضرون</h2>
+      <label for="ws">الورشة</label>
+      <select id="ws"></select>
+      <div class="stats"><span>المسجلون: <b id="sTotal">0</b></span><span>وصلتهم الشهادة: <b id="sSent">0</b></span><span>المحدّدون: <b id="sSel">0</b></span><span>رصيد الإيميلات اليوم: <b id="sQuota">-</b></span></div>
+      <div class="row" style="margin-top:0"><button class="ghost" id="all">تحديد الكل</button><button class="ghost" id="unsent">تحديد من لم تصلهم الشهادة</button><button class="ghost" id="none">إلغاء التحديد</button></div>
+      <div class="tw" style="margin-top:10px"><table><thead><tr><th></th><th>الاسم</th><th>الإيميل</th><th>المصدر</th><th>الشهادة</th></tr></thead><tbody id="rows"></tbody></table></div>
+    </div>
+
+    <div class="card">
+      <h2>إضافة شخص يدوياً</h2>
+      <label for="aName">الاسم الكامل</label><input id="aName" type="text">
+      <label for="aEmail">الإيميل</label><input id="aEmail" type="email" class="ltr" inputmode="email" autocapitalize="none">
+      <label for="aWs">الورشة</label><input id="aWs" type="text" class="ltr">
+      <div class="row"><button id="add">إضافة</button></div>
+      <div class="msg" id="amsg"></div>
+    </div>
+
+    <div class="card">
+      <h2>إرسال الشهادات (PDF)</h2>
+      <label for="cTitle">اسم الورشة على الشهادة</label><input id="cTitle" type="text" value="البودكاست وصناعة المحتوى">
+      <label for="cDate">التاريخ على الشهادة</label><input id="cDate" type="text" value="06/10/2026">
+      <div class="row"><button id="sendSel">إرسال للمحدّدين</button><button class="alt" id="sendUnsent">إرسال لمن لم تصلهم</button></div>
+      <div class="msg" id="cmsg"></div>
+    </div>
+
+    <div class="card">
+      <h2>إرسال ملفات / رسالة للمحدّدين</h2>
+      <label for="fSub">العنوان</label><input id="fSub" type="text">
+      <label for="fMsg">الرسالة</label><textarea id="fMsg"></textarea>
+      <label for="fFiles">الملفات (المجموع أقل من 8 ميغا)</label><input id="fFiles" type="file" multiple>
+      <div class="row"><button id="sendFiles">إرسال للمحدّدين</button></div>
+      <div class="msg" id="fmsg"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+var API = 'https://script.google.com/macros/s/AKfycbxbPaEGKkmkmS5aSwZdzFXk5pIzu2yYtUvV0x57IkqeNzrNeB13CoqiUImJKoKZNGbEUw/exec';
+var PRESETS = {
+  'Podcasting & Content Creation - 06/10': { title: 'البودكاست وصناعة المحتوى', date: '06/10/2026' },
+  'Spanish & Study Visa Application - 07/10': { title: 'اللغة الإسبانية وفيزا الدراسة', date: '07/10/2026' },
+  'Decision-Making & Daily Challenges - 10/10': { title: 'اتخاذ القرارات ومواجهة التحديات اليومية', date: '10/10/2026' }
+};
+var DEFAULT_WS = 'Spanish & Study Visa Application - 07/10';
+function preset() { var p = PRESETS[$('ws').value]; if (p) { $('cTitle').value = p.title; $('cDate').value = p.date; } }
+var pw = '', rows = [], sel = {};
+var $ = function (id) { return document.getElementById(id); };
+function show(id, t, c) { var m = $(id); m.className = 'msg ' + c; m.textContent = t; }
+
+async function api(action, payload) {
+  var r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(Object.assign({ action: action, password: pw }, payload || {})) });
+  return r.json();
+}
+function errText(e) {
+  return { auth: 'كلمة السر غير صحيحة.', quota: 'تجاوزت الحد اليومي للإيميلات. جرّب غداً أو قلّل العدد.', no_template: 'قالب الشهادة غير جاهز: شغّل createCertificateTemplate.',
+           invalid: 'بيانات ناقصة أو غير صحيحة.', title: 'اكتب اسم الورشة.' }[e] || ('خطأ: ' + e);
+}
+
+$('go').onclick = async function () {
+  pw = $('pw').value; if (!pw) return;
+  $('go').disabled = true;
+  try {
+    var r = await api('login');
+    if (!r.ok) { show('lmsg', errText(r.error), 'err'); return; }
+    sessionStorage.setItem('pw', pw);
+    $('login').style.display = 'none'; $('dash').style.display = 'block';
+    if (!r.template) show('cmsg', 'قالب الشهادة غير جاهز بعد: شغّل createCertificateTemplate في Apps Script.', 'err');
+    await refresh();
+  } catch (e) { show('lmsg', 'تعذّر الاتصال بالخادم.', 'err'); }
+  $('go').disabled = false;
+};
+if (sessionStorage.getItem('pw')) { $('pw').value = sessionStorage.getItem('pw'); $('go').click(); }
+
+async function refresh() {
+  var r = await api('list'); if (!r.ok) return;
+  rows = r.rows; $('sQuota').textContent = r.quota;
+  var set = {}; rows.forEach(function (x) { set[x.workshop] = 1; }); set[DEFAULT_WS] = 1; Object.keys(PRESETS).forEach(function (k) { set[k] = 1; });
+  var cur = $('ws').value || DEFAULT_WS; $('ws').textContent = '';
+  Object.keys(set).forEach(function (w) { var o = document.createElement('option'); o.value = o.textContent = w; $('ws').appendChild(o); });
+  $('ws').value = set[cur] ? cur : DEFAULT_WS; if (!$('aWs').value) $('aWs').value = $('ws').value; preset();
+  render();
+}
+function cur() { return rows.filter(function (x) { return x.workshop === $('ws').value; }); }
+function render() {
+  var list = cur(), tb = $('rows'); tb.textContent = '';
+  list.forEach(function (x) {
+    var tr = document.createElement('tr'), cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.style.cssText = 'width:20px;min-height:20px'; cb.checked = !!sel[x.email];
+    cb.onchange = function () { if (cb.checked) sel[x.email] = 1; else delete sel[x.email]; count(); };
+    var c0 = document.createElement('td'); c0.appendChild(cb); tr.appendChild(c0);
+    [x.name, x.email, x.source === 'manual' ? 'يدوي' : 'المنصة', x.sent ? '✅ أُرسلت' : '—'].forEach(function (v, j) {
+      var td = document.createElement('td'); td.textContent = v; if (j === 1) td.className = 'e'; tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+  $('sTotal').textContent = list.length; $('sSent').textContent = list.filter(function (x) { return x.sent; }).length; count();
+}
+function count() { $('sSel').textContent = cur().filter(function (x) { return sel[x.email]; }).length; }
+function selected() { return cur().filter(function (x) { return sel[x.email]; }).map(function (x) { return x.email; }); }
+$('ws').onchange = function () { $('aWs').value = $('ws').value; preset(); render(); };
+$('all').onclick = function () { cur().forEach(function (x) { sel[x.email] = 1; }); render(); };
+$('unsent').onclick = function () { sel = {}; cur().forEach(function (x) { if (!x.sent) sel[x.email] = 1; }); render(); };
+$('none').onclick = function () { sel = {}; render(); };
+
+$('add').onclick = async function () {
+  var b = $('add'); b.disabled = true;
+  try {
+    var r = await api('add', { name: $('aName').value, email: $('aEmail').value, workshop: $('aWs').value.trim() });
+    if (!r.ok) show('amsg', errText(r.error), 'err');
+    else { show('amsg', r.duplicate ? 'مسجّل من قبل.' : 'تمت الإضافة ✅', 'ok'); $('aName').value = ''; $('aEmail').value = ''; await refresh(); }
+  } catch (e) { show('amsg', 'تعذّر الاتصال.', 'err'); }
+  b.disabled = false;
+};
+
+async function sendCerts(list) {
+  if (!list.length) return show('cmsg', 'ما كاين حتى واحد محدّد.', 'err');
+  if (!confirm('إرسال الشهادة إلى ' + list.length + ' شخص؟')) return;
+  ['sendSel', 'sendUnsent'].forEach(function (i) { $(i).disabled = true; });
+  var done = 0, fail = [];
+  try {
+    for (var i = 0; i < list.length; i += 5) {
+      show('cmsg', 'جاري الإرسال... ' + done + ' / ' + list.length, 'info');
+      var r = await api('certs', { workshop: $('ws').value, title: $('cTitle').value.trim(), date: $('cDate').value.trim(), emails: list.slice(i, i + 5) });
+      if (!r.ok) { show('cmsg', errText(r.error) + '\nأُرسل: ' + done, 'err'); break; }
+      r.results.forEach(function (x) { if (x.ok) done++; else fail.push(x.email + ' (' + x.error + ')'); });
+      if (i + 5 >= list.length) show('cmsg', 'تم إرسال ' + done + ' شهادة ✅' + (fail.length ? '\nفشل:\n' + fail.join('\n') : ''), fail.length ? 'err' : 'ok');
+    }
+  } catch (e) { show('cmsg', 'انقطع الاتصال. أُرسل: ' + done + '. حدّث الصفحة وتأكد قبل الإعادة.', 'err'); }
+  ['sendSel', 'sendUnsent'].forEach(function (i) { $(i).disabled = false; });
+  await refresh();
+}
+$('sendSel').onclick = function () { sendCerts(selected()); };
+$('sendUnsent').onclick = function () { sendCerts(cur().filter(function (x) { return !x.sent; }).map(function (x) { return x.email; })); };
+
+function b64(file) {
+  return new Promise(function (res, rej) {
+    var fr = new FileReader(); fr.onload = function () { res(String(fr.result).split(',')[1]); }; fr.onerror = rej; fr.readAsDataURL(file);
+  });
+}
+$('sendFiles').onclick = async function () {
+  var list = selected(), files = Array.from($('fFiles').files), total = files.reduce(function (s, f) { return s + f.size; }, 0);
+  if (!list.length) return show('fmsg', 'ما كاين حتى واحد محدّد.', 'err');
+  if (!$('fSub').value.trim() || (!$('fMsg').value.trim() && !files.length)) return show('fmsg', 'اكتب العنوان والرسالة أو أرفق ملفاً.', 'err');
+  if (total > 8 * 1024 * 1024) return show('fmsg', 'الملفات أكبر من 8 ميغا.', 'err');
+  if (!confirm('إرسال إلى ' + list.length + ' شخص؟')) return;
+  var b = $('sendFiles'); b.disabled = true; show('fmsg', 'جاري الإرسال...', 'info');
+  try {
+    var att = []; for (var i = 0; i < files.length; i++) att.push({ name: files[i].name, mime: files[i].type, b64: await b64(files[i]) });
+    var r = await api('files', { emails: list, subject: $('fSub').value.trim(), message: $('fMsg').value, files: att });
+    if (!r.ok) show('fmsg', errText(r.error), 'err');
+    else {
+      var bad = r.results.filter(function (x) { return !x.ok; });
+      show('fmsg', 'تم الإرسال إلى ' + (r.results.length - bad.length) + ' ✅' + (bad.length ? '\nفشل:\n' + bad.map(function (x) { return x.email + ' (' + x.error + ')'; }).join('\n') : ''), bad.length ? 'err' : 'ok');
+      $('sQuota').textContent = r.quota;
+    }
+  } catch (e) { show('fmsg', 'تعذّر الإرسال.', 'err'); }
+  b.disabled = false;
+};
+</script>
+</body>
+</html>
